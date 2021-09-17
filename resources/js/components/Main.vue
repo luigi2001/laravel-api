@@ -1,0 +1,66 @@
+<template>
+    <main class="text-center">
+        <h2>articoli del blog:</h2>
+        <p class="border-bottom-0">pagina {{currentpage}} di {{lastpage}}</p>
+        <div class="mb-5" v-for="post in posts" :key="post.id">
+            <div class="card border-0">
+                <div class="card-body">
+                    <h5 class="card-title">{{post.title}}</h5>
+                    <p class="card-text">{{post.content}} <span><a href="">continua a leggere...</a></span> </p>
+                </div>
+            </div>
+        </div>
+        <div class="pulsanti ">
+            <ul>
+                <li><a href="" @click="getposts(currentpage - 1)">indietro</a></li>
+                <li><a href="" @click="getposts(currentpage + 1)">avanti</a></li>
+            </ul>
+        </div>
+    </main>
+</template>
+
+<script>
+export default {
+    name: 'Main',
+    data(){
+        return{
+            apiurl: 'http://localhost:8000/api/posts',
+            posts: [],
+            currentpage: 1,
+            lastpage: null
+        }
+    },
+    created(){
+        this.getposts(1);
+    },
+    methods: {
+        getposts(page){
+            axios.get(this.apiurl, {
+                params: {
+                    pagepost: page
+                }
+            })
+                 .then(response => {
+                     this.posts = response.data.results.data;
+                     this.currentpage = response.data.results.current_page;
+                     this.lastpage = response.data.results.last_page;
+                 })
+                 .catch();
+        }
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+p{
+    border-bottom: 5px solid yellow;
+    padding: 10px;
+}
+ul{
+    list-style: none;
+    li{
+    display: inline-block;
+    padding: 20px;
+    } 
+}
+</style>

@@ -13,8 +13,9 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index( Request $request )
+    {      
+
         $posts = Post::paginate(5);
         return response()->json([
             'success' => true,

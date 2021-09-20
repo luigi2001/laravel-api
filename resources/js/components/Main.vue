@@ -4,6 +4,9 @@
         <p class="border-bottom-0">pagina {{currentpage}} di {{lastpage}}</p>
         <div class="mb-5" v-for="post in posts" :key="post.id">
             <div class="card border-0">
+                <div class="card-header">
+                    {{formatdata(post.created_at)}}
+                </div>
                 <div class="card-body">
                     <h5 class="card-title">{{post.title}}</h5>
                     <p class="card-text">{{post.content}} <span><a href="">continua a leggere...</a></span> </p>
@@ -12,8 +15,8 @@
         </div>
         <div class="pulsanti ">
             <ul>
-                <li><a href="" @click="getposts(currentpage - 1)">indietro</a></li>
-                <li><a href="" @click="getposts(currentpage + 1)">avanti</a></li>
+                <li><span @click="getposts( --currentpage )">indietro</span></li>
+                <li :class="{'disabilita' : currentpage == lastpage}" ><span @click="getposts( ++currentpage )">avanti</span></li>
             </ul>
         </div>
     </main>
@@ -37,15 +40,20 @@ export default {
         getposts(page){
             axios.get(this.apiurl, {
                 params: {
-                    pagepost: page
+                    page: page
                 }
             })
                  .then(response => {
                      this.posts = response.data.results.data;
                      this.currentpage = response.data.results.current_page;
-                     this.lastpage = response.data.results.last_page;
+                     this.lastpage = response.data.results.last_page
+                     console.log( this.currentpage )
                  })
                  .catch();
+        },
+        formatdata(data){
+            const postData = new Date(data);
+            return postData.getDate() + '/' + parseInt(postData.getMonth() + 1) + '/' + postData.getFullYear();
         }
     }
 }
@@ -61,6 +69,10 @@ ul{
     li{
     display: inline-block;
     padding: 20px;
+    cursor: pointer;
     } 
+    .disabilita{
+        display: none;
+    }
 }
 </style>
